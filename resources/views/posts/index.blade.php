@@ -1,8 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Create Post
-        </h2>
+        <div class="flex justify-between items-center">
+
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Create Post
+            </h2>
+            <a href="{{ route('posts.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+    Create post
+</a>
+        </div>
     </x-slot>
 
     <div class="p-6 bg-white">
@@ -31,7 +37,7 @@
                                 <form method="POST" action="{{ route('posts.update', $post->id) }}">
                                     @csrf
                                     @method('PATCH')
-                                    <select name="status" onchange="this.form.submit()" class="border rounded px-2 py-1">
+                                    <select name="status" onchange="this.form.submit()" class="border rounded px-7 py-1">
                                         <option value="pending" {{ $post->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="published" {{ $post->status === 'published' ? 'selected' : '' }}>Published</option>
                                         <option value="rejected" {{ $post->status === 'rejected' ? 'selected' : '' }}>Rejected</option>
