@@ -1,68 +1,37 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Create Post
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <h1>All Posts</h1>
-
-    @if(session('success'))
-        <div style="color: green; margin-bottom: 15px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if($posts->isEmpty())
-        <p>No posts found.</p>
-    @else
-        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <div class="p-6 bg-white">
+        <table class="w-full table-auto border border-gray-200">
             <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Content</th>
-                    <th>Image</th>
-                    <th>Status</th>
+                <tr class="bg-gray-100 text-gray-700">
+                    <th class="px-4 py-2 border-b">Title</th>
+
+                    <th class="px-4 py-2 border-b">Status</th>
+                    @if(auth()->check() && auth()->user()->isAdmin())
+                        <th class="px-4 py-2 border-b">Action</th>
+                    @endif
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="text-center">
                 @foreach($posts as $post)
-                    <tr>
-                        <!-- Title: show full title only to admin, others see clickable text -->
-                        <td>
-                            @if(auth()->check() && auth()->user()->isAdmin())
-                                {{ $post->title }}
-                            @else
-                                <a href="#" onclick="event.preventDefault(); document.getElementById('content-{{ $post->id }}').style.display = 'block'; this.style.display='none';" style="cursor:pointer; color:blue; text-decoration: underline;">
-                                    Click to view
-                                </a>
-                            @endif
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 border-b">
+                            {{ $post->title }}
                         </td>
 
-                        <!-- Content: show only for admin or after click -->
-                        <td>
-                            @if(auth()->check() && auth()->user()->isAdmin())
-                                {{ $post->content }}
-                            @else
-                                <div id="content-{{ $post->id }}" style="display:none;">
-                                    {{ $post->content }}
-                                </div>
-                            @endif
-                        </td>
 
-                        <!-- Image -->
-                        <td>
-                            @if($post->image)
-                                <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" style="max-width: 150px; max-height: 100px;">
-                            @else
-                                No Image
-                            @endif
-                        </td>
 
-                        <!-- Status -->
-                        <td>
+                        <td class="px-4 py-2 border-b">
                             @if(auth()->check() && auth()->user()->isAdmin())
-                                <form method="POST" action="{{ route('posts.updateStatus', $post->id) }}">
+                                <form method="POST" action="{{ route('posts.update', $post->id) }}">
                                     @csrf
                                     @method('PATCH')
-                                    <select name="status" onchange="this.form.submit()">
+                                    <select name="status" onchange="this.form.submit()" class="border rounded px-2 py-1">
                                         <option value="pending" {{ $post->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="published" {{ $post->status === 'published' ? 'selected' : '' }}>Published</option>
                                         <option value="rejected" {{ $post->status === 'rejected' ? 'selected' : '' }}>Rejected</option>
@@ -72,10 +41,14 @@
                                 {{ ucfirst($post->status ?? 'pending') }}
                             @endif
                         </td>
+                         @if(auth()->check() && auth()->user()->isAdmin())
+                            <td class="px-4 py-2 border-b">
+                                <a href="{{ route('posts.show', $post->id) }}" class="text-blue-600 hover:underline">View</a>
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>
         </table>
-    @endif
-</div>
-@endsection
+    </div>
+</x-app-layout>
