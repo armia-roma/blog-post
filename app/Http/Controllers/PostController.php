@@ -39,5 +39,16 @@ class PostController extends Controller
     {
         return view('posts.show', compact('post'));
     }
+    public function update(Request $request, Post $post)
+{
+    $request->validate([
+        'status' => 'required|in:pending,published,rejected',
+    ]);
+
+    $post->status = $request->status;
+    $post->save();
+
+    return redirect()->back()->with('success', 'Post status updated!');
+}
 
 }
