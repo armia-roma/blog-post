@@ -9,6 +9,13 @@ Route::get('/', function () {
 
     return view('welcome');
 });
+Route::get('/home', function () {
+    $posts = Post::where('status', 'published')->latest()->paginate(10); // paginate 10 per page
+
+        // Pass posts to the view
+        return view('home', compact('posts'));
+})->name('home');
+
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index')->middleware(['auth', 'verified']);
 
 Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create')->middleware(['auth', 'verified'])->name('dashboard');
