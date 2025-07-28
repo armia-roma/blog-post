@@ -30,5 +30,9 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
-
+    function index()
+        {
+            $posts = Post::all();
+           return view('posts.index', compact('posts'));
+        }
 }
