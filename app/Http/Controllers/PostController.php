@@ -11,6 +11,7 @@ class PostController extends Controller
     {
         return view('posts.create');
     }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -30,11 +31,21 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
+
     function index()
-        {
-            $posts = Post::all();
-           return view('posts.index', compact('posts'));
-        }
+    {
+        $posts = Post::all();
+        return view('posts.index', compact('posts'));
+    }
+
+    public function published()
+    {
+        // Fetch only posts where status = 'published'
+        $posts = Post::where('status', 'published')->latest()->paginate(10); // paginate 10 per page
+
+        // Pass posts to the view
+        return view('dashboard', compact('posts'));
+    }
     public function show(Post $post)
     {
         return view('posts.show', compact('post'));
