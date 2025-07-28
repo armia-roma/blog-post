@@ -8,8 +8,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index')->middleware(['auth', 'verified']);
+
 Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create')->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show')->middleware(['auth', 'verified']);
+
+Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update')->middleware(['auth', 'is_admin']);
+
+
+Route::middleware(['auth', 'is_admin'])->patch('/posts/{post}/status', [PostController::class, 'updateStatus'])->name('posts.updateStatus');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
