@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+
     return view('welcome');
 });
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index')->middleware(['auth', 'verified']);
@@ -20,7 +22,11 @@ Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.up
 Route::middleware(['auth', 'is_admin'])->patch('/posts/{post}/status', [PostController::class, 'updateStatus'])->name('posts.updateStatus');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+     $posts = Post::where('status', 'published')->latest()->paginate(10); // paginate 10 per page
+
+        // Pass posts to the view
+        return view('dashboard', compact('posts'));
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
